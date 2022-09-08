@@ -170,7 +170,7 @@ model = keras_cv.models.RetinaNet(
     evaluate_train_time_metrics=True,
 )
 # Disable all FPN
-model.backbone.trainable = False
+model.backbone.trainable = True
 model.feature_pyramid.trainable = True
 
 optimizer = tf.optimizers.SGD(global_clipnorm=10.0)

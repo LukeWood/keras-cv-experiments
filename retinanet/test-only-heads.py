@@ -27,7 +27,7 @@ def _create_bounding_box_dataset(bounding_box_format):
     # Just about the easiest dataset you can have, all classes are 0, all boxes are
     # exactly the same.  [1, 1, 2, 2] are the coordinates in xyxy
     xs = tf.random.uniform((1, 512, 512, 3), dtype=tf.float32)
-    xs = tf.repeat(xs, repeats=64, axis=0) 
+    xs = tf.repeat(xs, repeats=64, axis=0)
     y_classes = tf.zeros((64, 1, 1), dtype=tf.float32)
 
     ys = tf.constant([0.25, 0.25, 0.1, 0.1], dtype=tf.float32)
@@ -171,7 +171,7 @@ model = keras_cv.models.RetinaNet(
 )
 # Disable all FPN
 model.backbone.trainable = False
-model.feature_pyramid.trainable = True
+model.feature_pyramid.trainable = False
 
 optimizer = tf.optimizers.SGD(global_clipnorm=10.0)
 model.compile(
@@ -210,8 +210,12 @@ def visualize_detections(model, x, y, path):
         y = y.to_tensor(default_value=-1)
 
     plotted_images = x
-    plotted_images = tf.image.draw_bounding_boxes(plotted_images, predictions[..., :4], color)
-    plotted_images = tf.image.draw_bounding_boxes(plotted_images, y[..., :4], true_color)
+    plotted_images = tf.image.draw_bounding_boxes(
+        plotted_images, predictions[..., :4], color
+    )
+    plotted_images = tf.image.draw_bounding_boxes(
+        plotted_images, y[..., :4], true_color
+    )
     for i in range(9):
         plt.subplot(9 // 3, 9 // 3, i + 1)
         plt.imshow(plotted_images[i].numpy().astype("uint8"))
